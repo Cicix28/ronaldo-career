@@ -13,6 +13,7 @@
   <nav class="tabs" id="tabs">
     <button class="tab active" data-view="overview">总览</button>
     <button class="tab" data-view="matches">逐场比赛</button>
+    <button class="tab" data-view="intl">国家队进球</button>
     <button class="tab" data-view="about">数据说明</button>
   </nav>
 </header>
@@ -111,6 +112,39 @@
       </table>
     </div>
     <div class="pager" id="pager"></div>
+  </section>
+
+
+  <!-- ============ 国家队进球 ============ -->
+  <section id="view-intl" class="view">
+    <div class="hero-intro card">
+      <div class="block-title"><span class="bar"></span>葡萄牙国家队 · C罗 进球记录</div>
+      <p class="intro-p">C罗为葡萄牙国家队攻入的 <b>146</b> 粒进球（数据来源：Wikipedia《List of international goals scored by Cristiano Ronaldo》，截至 2026-07）。</p>
+    </div>
+    <div class="stat-grid" id="intl-stats"></div>
+    <div class="filter-bar">
+      <select id="i-cat"></select>
+      <select id="i-year"></select>
+      <input id="i-search" type="search" placeholder="搜索对手 / 赛事 / 场地…">
+      <button id="i-reset" class="btn-ghost">重置</button>
+      <span class="filter-summary" id="i-summary"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="intl-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>日期</th>
+            <th>对手</th>
+            <th>进球比分</th>
+            <th>终场</th>
+            <th>赛事</th>
+            <th>场地</th>
+          </tr>
+        </thead>
+        <tbody id="intl-body"></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ============ 数据说明 ============ -->

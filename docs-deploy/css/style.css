@@ -199,3 +199,7 @@ footer{text-align:center; color:#5b6377; font-size:12px; padding:26px 14px 40px;
 #season-chart rect{transform-box:fill-box}
 .chart text{user-select:none}
 
+
+.hero-intro b{color:var(--gold2)}
+.intro-p{color:var(--muted);font-size:14px;margin-top:6px}
+

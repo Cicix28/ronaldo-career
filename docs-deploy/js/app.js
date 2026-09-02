@@ -416,6 +416,9 @@
       gsap.fromTo("#view-matches .filter-bar, #view-matches .table-wrap, #view-matches .pager",
         { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out", overwrite: true });
       if (window.ScrollTrigger) ScrollTrigger.refresh();
+    } else if (view === "intl") {
+      gsap.fromTo("#view-intl .hero-intro, #view-intl .filter-bar, #view-intl .table-wrap",
+        { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out", overwrite: true });
     } else if (view === "about") {
       gsap.fromTo("#view-about .about-card", { autoAlpha: 0, y: 18 },
         { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out", overwrite: true });
@@ -494,6 +497,72 @@
     }
   }
 
+  /* ---------- international goals ---------- */
+  function renderIntl() {
+    var goals = (DATA && DATA.intlGoals) ? DATA.intlGoals : [];
+    var tab = document.querySelector('.tab[data-view="intl"]');
+    if (!goals.length) { if (tab) tab.style.display = "none"; return; }
+
+    var byOpp = {};
+    goals.forEach(function (g) { byOpp[g.opponent] = (byOpp[g.opponent] || 0) + 1; });
+    var topOpp = Object.keys(byOpp).sort(function (a, b) { return byOpp[b] - byOpp[a]; })[0];
+    var cats = [];
+    goals.forEach(function (g) { if (cats.indexOf(g.cat) < 0) cats.push(g.cat); });
+    var order = ["世界杯", "欧洲杯", "世预赛", "欧预赛", "欧国联", "联合会杯", "友谊赛", "其他"];
+    cats.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
+    var years = [];
+    goals.forEach(function (g) { var y = g.date.slice(0, 4); if (years.indexOf(y) < 0) years.push(y); });
+    years.sort();
+    var first = goals[0], last = goals[goals.length - 1];
+    $id("intl-stats").innerHTML = [
+      { n: goals.length, l: "国家队进球" },
+      { n: first.date, l: "首球日期" },
+      { n: last.date, l: "最近进球" },
+      { n: byOpp[topOpp] + " · " + topOpp, l: "对阵最多" }
+    ].map(function (x) {
+      return '<div class="stat"><div class="num" style="font-size:15px">' + esc(x.n) + '</div><div class="lbl">' + x.l + "</div></div>";
+    }).join("");
+    fillSelect($id("i-cat"), cats, "全部赛事类型");
+    fillSelect($id("i-year"), years, "全部年份");
+
+    var st = { cat: "all", year: "all", search: "" };
+    function filtered() {
+      return goals.filter(function (g) {
+        if (st.cat !== "all" && g.cat !== st.cat) return false;
+        if (st.year !== "all" && g.date.slice(0, 4) !== st.year) return false;
+        if (st.search) {
+          var hay = (g.opponent + " " + g.competition + " " + g.venue).toLowerCase();
+          if (hay.indexOf(st.search) < 0) return false;
+        }
+        return true;
+      });
+    }
+    function draw() {
+      var rows = filtered();
+      $id("i-summary").textContent = "共 " + rows.length + " 粒进球";
+      $id("intl-body").innerHTML = rows.map(function (g) {
+        return "<tr>" +
+          "<td>" + g.no + "</td>" +
+          "<td>" + esc(g.date) + "</td>" +
+          "<td>" + esc(g.opponent) + "</td>" +
+          "<td>" + esc(g.goal_score) + "</td>" +
+          "<td>" + esc(g.result) + "</td>" +
+          "<td>" + esc(g.cat) + " · " + esc(g.competition) + "</td>" +
+          "<td>" + esc(g.venue) + "</td>" +
+          "</tr>";
+      }).join("") || '<tr><td colspan="7" style="text-align:center;color:#8b93a7;padding:30px">没有符合条件的进球</td></tr>';
+    }
+    $id("i-cat").addEventListener("change", function () { st.cat = this.value; draw(); });
+    $id("i-year").addEventListener("change", function () { st.year = this.value; draw(); });
+    $id("i-search").addEventListener("input", function () { st.search = this.value.trim().toLowerCase(); draw(); });
+    $id("i-reset").addEventListener("click", function () {
+      $id("i-cat").value = "all"; $id("i-year").value = "all"; $id("i-search").value = "";
+      st.cat = "all"; st.year = "all"; st.search = ""; draw();
+    });
+    draw();
+  }
+
+
   /* ---------- boot ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     if (!M.length) {
@@ -506,6 +575,7 @@
     renderMatches();
     renderAbout();
     renderCredits();
+    renderIntl();
     initAnimations();
   });
 })();
