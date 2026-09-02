@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C罗 · 职业生涯比赛记录</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-badge">CR7</span><span class="brand-text">C罗 · 生涯比赛记录</span></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">总览</button>
+    <button class="tab" data-view="matches">逐场比赛</button>
+    <button class="tab" data-view="about">数据说明</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ 总览 ============ -->
+  <section id="view-overview" class="view active">
+
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-veil"></div>
+      <div class="hero-content">
+        <div class="hero-avatar"><img src="assets/img/avatar.jpg" alt="Cristiano Ronaldo"></div>
+        <div class="hero-txt">
+          <div class="hero-name">
+            <h1>克里斯蒂亚诺·罗纳尔多</h1>
+            <span class="hero-no">7</span>
+          </div>
+          <p class="hero-sub">Cristiano Ronaldo · 逐场比赛数据展示</p>
+          <p class="hero-note" id="hero-note"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid" id="stat-grid"></div>
+
+    <div class="block">
+      <h2 class="block-title"><span class="bar"></span>赛场瞬间 <span class="hint">照片 © 原作者 · CC 授权（见页脚）</span></h2>
+      <div class="gallery">
+        <figure class="g-item">
+          <img src="assets/img/madrid.jpg" alt="皇家马德里时期" loading="lazy">
+          <figcaption><b>皇家马德里</b>2014 · 金球奖时刻</figcaption>
+        </figure>
+        <figure class="g-item">
+          <img src="assets/img/juve.jpg" alt="尤文图斯时期" loading="lazy">
+          <figcaption><b>尤文图斯</b>2019/20 · 意甲联赛</figcaption>
+        </figure>
+        <figure class="g-item">
+          <img src="assets/img/alnassr.jpg" alt="利雅得胜利时期" loading="lazy">
+          <figcaption><b>利雅得胜利</b>2023 · 亚冠</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2 class="block-title"><span class="bar"></span>效力阶段 <span class="hint">（当前数据范围）</span></h2>
+      <div class="club-grid" id="club-grid"></div>
+    </div>
+
+    <div class="block two-col">
+      <div class="card">
+        <h2 class="block-title"><span class="bar"></span>每赛季出场 &amp; 进球趋势</h2>
+        <div id="season-chart" class="chart"></div>
+      </div>
+      <div class="card">
+        <h2 class="block-title"><span class="bar"></span>赛事分布（按出场）</h2>
+        <div id="comp-chart" class="chart"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2 class="block-title"><span class="bar"></span>里程碑</h2>
+      <div id="milestones" class="milestones"></div>
+    </div>
+  </section>
+
+  <!-- ============ 逐场比赛 ============ -->
+  <section id="view-matches" class="view">
+    <div class="filter-bar" id="filter-bar">
+      <select id="f-club"></select>
+      <select id="f-season"></select>
+      <select id="f-comp"></select>
+      <select id="f-result"></select>
+      <input id="f-search" type="search" placeholder="搜索对手 / 轮次…">
+      <button id="f-reset" class="btn-ghost">重置</button>
+      <span class="filter-summary" id="filter-summary"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="match-table">
+        <thead>
+          <tr>
+            <th data-key="date" class="sortable">日期</th>
+            <th data-key="club_short">俱乐部</th>
+            <th data-key="comp_zh">赛事</th>
+            <th data-key="opponent">对手</th>
+            <th data-key="venue">主/客</th>
+            <th data-key="score">比分</th>
+            <th data-key="res">结果</th>
+            <th data-key="goals">进球</th>
+            <th data-key="assists">助攻</th>
+            <th data-key="mins">时间</th>
+            <th data-key="cards">牌</th>
+          </tr>
+        </thead>
+        <tbody id="match-body"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="pager"></div>
+  </section>
+
+  <!-- ============ 数据说明 ============ -->
+  <section id="view-about" class="view">
+    <div class="card about-card">
+      <h2><span class="bar"></span>数据来源与范围</h2>
+      <div id="about-content"></div>
+      <h2><span class="bar"></span>照片授权（Wikimedia Commons）</h2>
+      <div class="credits" id="photo-credits"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div>数据基于 Kaggle「Football Data from Transfermarkt」 · 由 Codex 生成 · 2026-09-02</div>
+  <div class="foot-credits" id="foot-credits"></div>
+</footer>
+
+<script src="data/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
