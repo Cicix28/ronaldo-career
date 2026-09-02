@@ -69,9 +69,9 @@ main{max-width:1180px; margin:0 auto; padding:22px 18px 60px}
   padding:38px 34px; width:100%;}
 .hero-avatar{flex:0 0 auto; width:150px; height:150px; border-radius:50%; overflow:hidden;
   border:3px solid var(--gold); box-shadow:0 0 0 6px rgba(230,193,92,.18), 0 18px 40px rgba(0,0,0,.5);
-  background:#111; animation:pop .6s ease;}
+  background:#111;}
 .hero-avatar img{width:100%; height:100%; object-fit:cover; object-position:top center}
-@keyframes pop{0%{transform:scale(.8); opacity:0}100%{transform:scale(1); opacity:1}}
+
 .hero-txt{min-width:0}
 .hero-name{display:flex; align-items:center; gap:12px}
 .hero-name h1{font-size:clamp(24px,4.2vw,40px); font-weight:800; letter-spacing:1px;
@@ -193,3 +193,9 @@ footer{text-align:center; color:#5b6377; font-size:12px; padding:26px 14px 40px;
   .hero{min-height:auto}
   .hero-avatar{width:110px; height:110px}
 }
+
+
+/* svg bar animation support */
+#season-chart rect{transform-box:fill-box}
+.chart text{user-select:none}
+

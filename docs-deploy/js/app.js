@@ -43,6 +43,7 @@
         t.classList.add("active");
         document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("active"); });
         $id("view-" + t.dataset.view).classList.add("active");
+        playViewEntrance(t.dataset.view);
       });
     });
   }
@@ -406,6 +407,93 @@
     if (foot) foot.innerHTML = "照片 © 原作者（Wikimedia Commons，CC 授权）：" + PHOTO_CREDITS.map(function (p) { return p.author; }).join("、") + " — 许可详情见“数据说明”页";
   }
 
+
+  /* ---------- GSAP animations ---------- */
+  function playViewEntrance(view) {
+    if (typeof gsap === "undefined") return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (view === "matches") {
+      gsap.fromTo("#view-matches .filter-bar, #view-matches .table-wrap, #view-matches .pager",
+        { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out", overwrite: true });
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    } else if (view === "about") {
+      gsap.fromTo("#view-about .about-card", { autoAlpha: 0, y: 18 },
+        { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out", overwrite: true });
+    }
+  }
+
+  function initAnimations() {
+    if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    function animateNumbers() {
+      document.querySelectorAll("#stat-grid .stat .num").forEach(function (el) {
+        var raw = el.textContent;
+        var target = parseFloat(raw);
+        if (isNaN(target)) return;
+        var decimals = (raw.split(".")[1] || "").length;
+        el.textContent = "0";
+        var obj = { v: 0 };
+        gsap.to(obj, {
+          v: target, duration: 1.5, ease: "power2.out", delay: 0.6,
+          onUpdate: function () { el.textContent = obj.v.toFixed(decimals); }
+        });
+      });
+    }
+
+    var tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.from(".hero-avatar", { scale: 0.4, autoAlpha: 0, duration: 0.9, ease: "back.out(1.7)" })
+      .from(".hero-name h1", { y: 46, autoAlpha: 0, duration: 0.85 }, "-=0.45")
+      .from(".hero-sub", { y: 22, autoAlpha: 0, duration: 0.6 }, "-=0.55")
+      .from(".hero-no", { scale: 0, rotation: -45, autoAlpha: 0, duration: 0.7, ease: "back.out(2.4)" }, "-=0.4")
+      .from(".hero-note", { y: 16, autoAlpha: 0, duration: 0.6 }, "-=0.35");
+    tl.eventCallback("onComplete", function () {
+      gsap.set(".hero-avatar, .hero-name h1, .hero-sub, .hero-no, .hero-note", { clearProps: "opacity,visibility,transform" });
+    });
+
+    gsap.to(".hero-avatar", { y: -8, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1.4 });
+
+    var tl2 = gsap.timeline({ delay: 0.35 });
+    tl2.from("#view-overview .stat", { y: 34, autoAlpha: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" })
+       .add(function () { animateNumbers(); }, "-=0.2");
+    tl2.eventCallback("onComplete", function () {
+      gsap.set("#view-overview .stat", { clearProps: "opacity,visibility,transform" });
+    });
+
+    function reveal(sel) {
+      var els = gsap.utils.toArray(sel);
+      if (!els.length) return;
+      gsap.fromTo(els, { autoAlpha: 0, y: 36 }, {
+        autoAlpha: 1, y: 0, duration: 0.75, ease: "power3.out", stagger: 0.06,
+        scrollTrigger: { trigger: els[0], start: "top 86%", once: true }
+      });
+    }
+    reveal("#view-overview .block > .block-title");
+    reveal("#view-overview .g-item");
+    reveal("#view-overview .club-card");
+    reveal("#view-overview .milestone");
+    reveal("#view-overview .two-col .card");
+
+    gsap.from("#view-overview #season-chart svg", {
+      autoAlpha: 0, duration: 0.6,
+      scrollTrigger: { trigger: "#view-overview #season-chart", start: "top 88%", once: true }
+    });
+    gsap.from("#view-overview #season-chart rect", {
+      scaleY: 0, transformOrigin: "50% 100%", duration: 0.75, stagger: 0.05, ease: "power3.out",
+      scrollTrigger: { trigger: "#view-overview #season-chart", start: "top 88%", once: true }
+    });
+
+    if (window.ScrollTrigger) {
+      gsap.to(".hero-bg", {
+        yPercent: 12, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+      });
+    }
+  }
+
   /* ---------- boot ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     if (!M.length) {
@@ -418,6 +506,7 @@
     renderMatches();
     renderAbout();
     renderCredits();
+    initAnimations();
   });
 })();
 
