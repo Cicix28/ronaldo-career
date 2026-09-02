@@ -203,3 +203,13 @@ footer{text-align:center; color:#5b6377; font-size:12px; padding:26px 14px 40px;
 .hero-intro b{color:var(--gold2)}
 .intro-p{color:var(--muted);font-size:14px;margin-top:6px}
 
+
+/* national team banner */
+.intl-banner{display:flex;align-items:center;gap:16px;margin:18px 0 4px;padding:14px 18px;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,rgba(76,158,90,.16),rgba(230,193,92,.07));border:1px solid rgba(76,158,90,.45);transition:.2s}
+.intl-banner:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.ib-flag{font-size:34px;line-height:1}
+.ib-main{flex:1;min-width:0}
+.ib-title{font-weight:800;color:var(--gold2);font-size:16px}
+.ib-sub{font-size:13px;color:var(--muted)}
+.ib-go{color:var(--gold);font-weight:700;font-size:13px;white-space:nowrap}

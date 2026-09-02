@@ -52,7 +52,9 @@
   function sum(arr, f) { return arr.reduce(function (a, x) { return a + (f(x) || 0); }, 0); }
 
   function renderOverview() {
-    $id("hero-note").textContent = (PLAYER.note || "") + "\n覆盖：" + (PLAYER.coverage || "");
+    var intlTotal = (DATA && DATA.intlGoals) ? DATA.intlGoals.length : 0;
+    $id("hero-note").textContent = (PLAYER.note || "") + "\n覆盖：" + (PLAYER.coverage || "") +
+      (intlTotal ? ("\n国家队：进球记录 " + intlTotal + " 粒（Wikipedia，2004–2026），见「国家队进球」标签") : "");
     var n = M.length;
     var goals = sum(M, function (m) { return m.goals; });
     var assists = sum(M, function (m) { return m.assists; });
@@ -74,6 +76,10 @@
     $id("stat-grid").innerHTML = stats.map(function (s, i) {
       return '<div class="stat"><div class="ico">' + (icons[i] || "") + '</div><div class="num">' + s.n + '</div><div class="lbl">' + s.l + "</div></div>";
     }).join("");
+    if (intlTotal) {
+      $id("stat-grid").insertAdjacentHTML("beforeend",
+        '<div class="stat"><div class="ico">🇵🇹</div><div class="num">' + intlTotal + '</div><div class="lbl">国家队进球</div></div>');
+    }
 
     renderClubs();
     renderSeasonChart();
@@ -558,6 +564,13 @@
     $id("i-reset").addEventListener("click", function () {
       $id("i-cat").value = "all"; $id("i-year").value = "all"; $id("i-search").value = "";
       st.cat = "all"; st.year = "all"; st.search = ""; draw();
+    });
+    var bsub = $id("intl-banner-sub");
+    if (bsub) bsub.textContent = "共 " + goals.length + " 粒进球（" + goals[0].date + " → " + goals[goals.length - 1].date + "）· 点击查看全部";
+    var bb = $id("intl-banner");
+    if (bb) bb.addEventListener("click", function () {
+      var tb = document.querySelector('.tab[data-view="intl"]');
+      if (tb) tb.click();
     });
     draw();
   }
