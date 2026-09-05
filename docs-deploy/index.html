@@ -13,7 +13,7 @@
   <nav class="tabs" id="tabs">
     <button class="tab active" data-view="overview">总览</button>
     <button class="tab" data-view="matches">逐场比赛</button>
-    <button class="tab" data-view="intl">国家队进球</button>
+    <button class="tab" data-view="intl">国家队</button>
     <button class="tab" data-view="about">数据说明</button>
   </nav>
 </header>
@@ -23,8 +23,11 @@
   <section id="view-overview" class="view active">
 
     <div class="hero">
-      <div class="hero-bg"></div>
+      <div class="hero-slides" id="hero-slides"></div>
       <div class="hero-veil"></div>
+      <button class="hero-arr hero-arr-l" id="hs-prev" type="button" aria-label="上一张">&lsaquo;</button>
+      <button class="hero-arr hero-arr-r" id="hs-next" type="button" aria-label="下一张">&rsaquo;</button>
+      <div class="hero-dots" id="hs-dots"></div>
       <div class="hero-content">
         <div class="hero-avatar"><img src="assets/img/avatar.jpg" alt="Cristiano Ronaldo"></div>
         <div class="hero-txt">
@@ -124,35 +127,71 @@
   </section>
 
 
-  <!-- ============ 国家队进球 ============ -->
+  <!-- ============ 国家队 ============ -->
   <section id="view-intl" class="view">
     <div class="hero-intro card">
-      <div class="block-title"><span class="bar"></span>葡萄牙国家队 · C罗 进球记录</div>
+      <div class="block-title"><span class="bar"></span>葡萄牙国家队 · 全部出场与进球</div>
+      <p class="intro-p">C罗为葡萄牙国家队出场 <b>233</b> 场、攻入 <b>146</b> 球（截至 2026-07 世界杯）。下表列出每一场国家队比赛（含未进球场次），进球逐粒明细见下方。</p>
+    </div>
+
+    <div class="card intl-card">
+      <div class="block-title"><span class="bar"></span>国家队 · 全部出场（233 场）</div>
+      <div class="stat-grid" id="caps-stats"></div>
+      <div class="filter-bar">
+        <select id="c-year"></select>
+        <select id="c-cat"></select>
+        <input id="c-search" type="search" placeholder="搜索对手 / 赛事…">
+        <button id="c-reset" class="btn-ghost">重置</button>
+        <span class="filter-summary" id="c-summary"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="caps-table">
+          <thead>
+            <tr>
+              <th>出场</th>
+              <th>日期</th>
+              <th>主/客</th>
+              <th>对手</th>
+              <th>比分</th>
+              <th>结果</th>
+              <th>进球</th>
+              <th>助攻</th>
+              <th>时间</th>
+              <th>赛事</th>
+            </tr>
+          </thead>
+          <tbody id="caps-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card intl-card">
+      <div class="block-title"><span class="bar"></span>国家队 · 进球明细（146 粒）</div>
       <p class="intro-p">C罗为葡萄牙国家队攻入的 <b>146</b> 粒进球（数据来源：Wikipedia《List of international goals scored by Cristiano Ronaldo》，截至 2026-07）。</p>
-    </div>
-    <div class="stat-grid" id="intl-stats"></div>
-    <div class="filter-bar">
-      <select id="i-cat"></select>
-      <select id="i-year"></select>
-      <input id="i-search" type="search" placeholder="搜索对手 / 赛事 / 场地…">
-      <button id="i-reset" class="btn-ghost">重置</button>
-      <span class="filter-summary" id="i-summary"></span>
-    </div>
-    <div class="table-wrap">
-      <table id="intl-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>日期</th>
-            <th>对手</th>
-            <th>进球比分</th>
-            <th>终场</th>
-            <th>赛事</th>
-            <th>场地</th>
-          </tr>
-        </thead>
-        <tbody id="intl-body"></tbody>
-      </table>
+      <div class="stat-grid" id="intl-stats"></div>
+      <div class="filter-bar">
+        <select id="i-cat"></select>
+        <select id="i-year"></select>
+        <input id="i-search" type="search" placeholder="搜索对手 / 赛事 / 场地…">
+        <button id="i-reset" class="btn-ghost">重置</button>
+        <span class="filter-summary" id="i-summary"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="intl-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>日期</th>
+              <th>对手</th>
+              <th>进球比分</th>
+              <th>终场</th>
+              <th>赛事</th>
+              <th>场地</th>
+            </tr>
+          </thead>
+          <tbody id="intl-body"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -168,7 +207,7 @@
 </main>
 
 <footer>
-  <div>数据基于 Kaggle「Football Data from Transfermarkt」 · 由 Codex 生成 · 2026-09-02</div>
+  <div>逐场数据基于 Transfermarkt · 生涯合计参考 Wikipedia · 由 Codex 生成 · 2026-09-05</div>
   <div class="foot-credits" id="foot-credits"></div>
 </footer>
 
