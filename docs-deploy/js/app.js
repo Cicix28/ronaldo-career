@@ -7,9 +7,11 @@
   var PLAYER = DATA ? DATA.player : {};
 
   var CLUB_ACC = {
+    "葡萄牙体育": { c: "#2e9e5b", c2: "#93d8b0", m: "体" },
     "皇家马德里": { c: "#c8a24a", c2: "#f5d97e", m: "皇" },
     "尤文图斯": { c: "#aeb9c9", c2: "#e8eef6", m: "尤" },
     "曼联": { c: "#e0442c", c2: "#ff9b87", m: "曼" },
+    "利雅得胜利": { c: "#4f9cd6", c2: "#a5d3f5", m: "胜" },
     "葡萄牙": { c: "#4c9e5a", c2: "#9bd9a5", m: "葡" }
   };
 
@@ -18,7 +20,21 @@
     { file: "assets/img/avatar.jpg", label: "头像 · 皇家马德里", author: "Jan S0L0", lic: "CC BY-SA 2.0", url: "https://commons.wikimedia.org/wiki/File:Cristiano_Ronaldo_RM_3.jpg" },
     { file: "assets/img/madrid.jpg", label: "图集 · 2014 金球奖", author: "Anish Morarji", lic: "CC BY 2.0", url: "https://commons.wikimedia.org/wiki/File:Cristiano_Ronaldo_-_Ballon_d%27Or.jpg" },
     { file: "assets/img/juve.jpg", label: "图集 · 尤文图斯（2019/20）", author: "IamAlwaysHere", lic: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:2019-20_Serie_A_-_Torino_v_Juventus_-_Cristiano_Ronaldo.jpg" },
-    { file: "assets/img/alnassr.jpg", label: "图集 · 利雅得胜利（2023）", author: "Mehrdad Esfahani/SNN", lic: "Attribution", url: "https://commons.wikimedia.org/wiki/File:Cristiano_Ronaldo_in_Al_Nassr_in_2023.jpg" }
+    { file: "assets/img/alnassr.jpg", label: "图集 · 利雅得胜利（2023）", author: "Mehrdad Esfahani/SNN", lic: "Attribution", url: "https://commons.wikimedia.org/wiki/File:Cristiano_Ronaldo_in_Al_Nassr_in_2023.jpg" },
+    { file: "assets/img/manutd.jpg", label: "首页轮播 · 曼联（vs 切尔西）", author: "Ray Booysen", lic: "CC BY 2.0", url: "https://commons.wikimedia.org/wiki/File:Ronaldo_-_Manchester_United_vs_Chelsea.jpg" },
+    { file: "assets/img/madrid_cl.jpg", label: "首页轮播 · 皇家马德里（2011 欧冠）", author: "Addesolen", lic: "CC0", url: "https://commons.wikimedia.org/wiki/File:Cristiano_Ajax.jpg" },
+    { file: "assets/img/madrid2018.jpg", label: "首页轮播 · 皇家马德里（2018）", author: "Антон Зайцев", lic: "CC BY-SA 3.0", url: "https://commons.wikimedia.org/wiki/File:Ronaldo_in_2018.jpg" },
+    { file: "assets/img/alnassr2.jpg", label: "首页轮播 · 利雅得胜利（2023）", author: "Mehdi Marizad", lic: "CC BY 4.0", url: "https://commons.wikimedia.org/wiki/File:Cristiano_Ronaldo_in_2023.jpg" }
+  ];
+  var HERO_PHOTOS = [
+    "assets/img/manutd.jpg",
+    "assets/img/madrid_cl.jpg",
+    "assets/img/madrid.jpg",
+    "assets/img/madrid2018.jpg",
+    "assets/img/juve.jpg",
+    "assets/img/alnassr.jpg",
+    "assets/img/alnassr2.jpg",
+    "assets/img/hero.jpg"
   ];
   var PAGE_SIZE = 50;
 
@@ -52,34 +68,25 @@
   function sum(arr, f) { return arr.reduce(function (a, x) { return a + (f(x) || 0); }, 0); }
 
   function renderOverview() {
-    var intlTotal = (DATA && DATA.intlGoals) ? DATA.intlGoals.length : 0;
-    $id("hero-note").textContent = (PLAYER.note || "") + "\n覆盖：" + (PLAYER.coverage || "") +
-      (intlTotal ? ("\n国家队：进球记录 " + intlTotal + " 粒（Wikipedia，2004–2026），见「国家队进球」标签") : "");
-    var n = M.length;
-    var goals = sum(M, function (m) { return m.goals; });
-    var assists = sum(M, function (m) { return m.assists; });
-    var wins = M.filter(function (m) { return m.res === "W"; }).length;
-    var ht = M.filter(function (m) { return m.goals >= 3; }).length;
-    var b2b = M.filter(function (m) { return m.goals >= 2; }).length;
-    var mins = sum(M, function (m) { return m.mins; });
-    var icons = ["⚽", "🎯", "🅰", "🏆", "✌", "🎩", "📈", "⏱"];
+    var c = (PLAYER.career || {});
+    $id("hero-note").textContent =
+      "逐场明细（Transfermarkt）：俱乐部 " + c.clubApps + " 场 · " + c.clubGoals + " 球 · " + c.clubAssists + " 助攻；国家队 " + c.natCaps + " 场出场 · " + c.natGoals + " 球（含全部出场）\n" +
+      "生涯总口径（" + (c.wikiAsOf || "Wikipedia") + "）：总出场 " + c.wikiApps + " · 总进球 " + c.wikiGoals + "\n" +
+      "差额说明：Wikipedia 另计入葡萄牙体育 B 队 2 场（0 球）与 2023 阿拉伯俱乐部冠军杯 6 场 6 球（Transfermarkt 未逐场收录），故逐场明细合计为 " + c.detailTotalApps + " 场 · " + c.detailTotalGoals + " 球 · " + c.detailTotalAssists + " 助攻。";
+    var icons = ["🏆", "⚽", "🇵🇹", "🥅", "🎯", "📋", "📊", "🅰"];
     var stats = [
-      { n: n, l: "总出场" },
-      { n: goals, l: "总进球" },
-      { n: assists, l: "总助攻" },
-      { n: wins, l: "胜场" },
-      { n: b2b, l: "梅开二度+" },
-      { n: ht, l: "帽子戏法" },
-      { n: (goals / n).toFixed(2), l: "场均进球" },
-      { n: mins, l: "出场分钟" }
+      { n: c.wikiApps, l: "总出场（生涯）" },
+      { n: c.wikiGoals, l: "总进球（生涯）" },
+      { n: c.natCaps, l: "国家队出场" },
+      { n: c.natGoals, l: "国家队进球" },
+      { n: c.wikiClubGoals, l: "俱乐部进球（生涯口径）" },
+      { n: c.detailTotalApps, l: "逐场·合计出场" },
+      { n: c.detailTotalGoals, l: "逐场·合计进球" },
+      { n: c.detailTotalAssists, l: "逐场·总助攻" }
     ];
-    $id("stat-grid").innerHTML = stats.map(function (s, i) {
-      return '<div class="stat"><div class="ico">' + (icons[i] || "") + '</div><div class="num">' + s.n + '</div><div class="lbl">' + s.l + "</div></div>";
+    $id("stat-grid").innerHTML = stats.map(function (x, i) {
+      return '<div class="stat"><div class="ico">' + (icons[i] || "") + '</div><div class="num">' + x.n + '</div><div class="lbl">' + x.l + "</div></div>";
     }).join("");
-    if (intlTotal) {
-      $id("stat-grid").insertAdjacentHTML("beforeend",
-        '<div class="stat"><div class="ico">🇵🇹</div><div class="num">' + intlTotal + '</div><div class="lbl">国家队进球</div></div>');
-    }
 
     renderClubs();
     renderSeasonChart();
@@ -203,11 +210,11 @@
     ordered.forEach(function (m) {
       cum += m.goals; cumA += m.assists;
       if (m.goals >= 3 && !htDone) { items.push({ t: "第 1 个帽子戏法", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") + " · " + m.goals + " 球" }); htDone = true; }
-      if (cum >= 100 && cum - m.goals < 100) items.push({ t: "生涯 100 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
-      if (cum >= 200 && cum - m.goals < 200) items.push({ t: "生涯 200 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
-      if (cum >= 300 && cum - m.goals < 300) items.push({ t: "生涯 300 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
-      if (cum >= 400 && cum - m.goals < 400) items.push({ t: "生涯 400 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
-      if (cumA >= 100 && cumA - m.assists < 100) items.push({ t: "生涯 100 助攻", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
+      if (cum >= 100 && cum - m.goals < 100) items.push({ t: "俱乐部 100 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
+      if (cum >= 200 && cum - m.goals < 200) items.push({ t: "俱乐部 200 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
+      if (cum >= 300 && cum - m.goals < 300) items.push({ t: "俱乐部 300 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
+      if (cum >= 400 && cum - m.goals < 400) items.push({ t: "俱乐部 400 球", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
+      if (cumA >= 100 && cumA - m.assists < 100) items.push({ t: "俱乐部 100 助攻", d: m.date, s: m.club_short + " vs " + (m.opponent || "-") });
     });
     $id("milestones").innerHTML = items.map(function (it) {
       return '<div class="milestone"><b>' + esc(it.t) + "</b><p>" + esc(it.d) + " · " + esc(it.s) + "</p></div>";
@@ -379,25 +386,25 @@
   function renderAbout() {
     var html =
       "<h2>数据来源</h2>" +
-      '<p>' + esc(PLAYER.source || "") + "。</p>" +
+      "<ul><li><b>逐场明细</b>：Transfermarkt（2026-09-05 在线抓取）——俱乐部与国家队每一场的日期/对手/比分/个人数据</li>" +
+      "<li><b>生涯合计 / 国家队进球逐粒</b>：Wikipedia（截至 2026-07）</li></ul>" +
       "<h2>当前收录范围</h2>" +
-      '<ul><li>俱乐部：' + esc(PLAYER.coverage || "") + "</li>" +
-      "<li>覆盖皇马（2012/13–2017/18，294 场）、尤文图斯（2018/19–2021/22，134 场）、曼联二期（2021/22–2022/23，54 场）的主流赛事</li>" +
-      "<li>赛事：各国联赛 + 国内杯赛/超级杯 + 欧冠/欧联/欧超杯 + 世俱杯</li>" +
-      "<li>国家队：葡萄牙 2026 世界杯小组赛 3 场（数据集中有记录的部分）</li></ul>" +
-      "<h2>暂未收录（可后续补充）</h2>" +
-      "<ul><li>2002–2012：葡萄牙体育、曼联一期、皇马前三季（数据集出场表自 2012 年起）</li>" +
-      "<li>利雅得胜利的沙特联赛逐场（该数据集不追踪沙特联赛）</li>" +
-      "<li>葡萄牙国家队其余约 230 场（世界杯/欧洲杯/欧国联/友谊赛等）</li></ul>" +
+      "<ul><li>俱乐部逐场：<b>1094 场</b>——葡萄牙体育(2002/03)、曼联(2003–2009、2021–2022)、皇家马德里(2009–2018)、尤文图斯(2018–2021)、利雅得胜利(2023–2026)</li>" +
+      "<li>国家队：<b>全部 233 场出场</b>（含未进球场次）+ <b>146 粒进球逐粒明细</b>（2003–2026）</li>" +
+      "<li>赛事：各国联赛、国内杯赛/超级杯、欧冠/欧联/欧超杯、亚冠/亚冠精英/亚冠2、世俱杯、国家队全部赛事</li></ul>" +
+      "<h2>口径说明（重要）</h2>" +
+      "<ul><li>首页「总出场 1335 / 总进球 978」为 Wikipedia 生涯口径（截至 2026-07）；俱乐部合计 1102 场 832 球，国家队 233 场 146 球</li>" +
+      "<li>逐场明细合计为 1327 场 / 972 球；差额为 Wikipedia 计入的葡萄牙体育 B 队 2 场（0 球）与 2023 阿拉伯俱乐部冠军杯 6 场 6 球（Transfermarkt 未逐场收录）</li>" +
+      "<li>出场 = 有登场时间；比分/结果按 C罗 所在球队视角；点球大战场次显示点球比分（结果按晋级判定）；黄牌列按张数计</li></ul>" +
       "<h2>字段说明</h2>" +
       '<div class="kv">' +
       "<b>日期/赛季</b><span>比赛日期与所属赛季</span>" +
-      "<b>赛事</b><span>联赛、杯赛、欧战等</span>" +
+      "<b>赛事</b><span>联赛、杯赛、欧战、国家队赛事</span>" +
       "<b>比分/结果</b><span>按 C罗所在球队视角的主/客场比分与胜负平</span>" +
-      "<b>进球/助攻</b><span>该场 C罗 的个人数据（来自 Transfermarkt）</span>" +
+      "<b>进球/助攻</b><span>该场 C罗 的个人数据</span>" +
       "<b>时间</b><span>该场出场分钟数</span></div>" +
       "<h2>技术说明</h2>" +
-      "<p>纯静态网页，无后端、无外部依赖，数据内嵌于 <code>data/data.js</code>，离线可直接打开 <code>index.html</code> 使用。</p>";
+      "<p>纯静态网页，无后端、无外部依赖，数据内嵌于 <code>data/data.js</code>（约 1094 场俱乐部 + 233 场国家队 + 146 粒进球明细），离线可直接打开 <code>index.html</code> 使用。</p>";
     $id("about-content").innerHTML = html;
   }
 
@@ -495,12 +502,156 @@
       scrollTrigger: { trigger: "#view-overview #season-chart", start: "top 88%", once: true }
     });
 
-    if (window.ScrollTrigger) {
-      gsap.to(".hero-bg", {
-        yPercent: 12, ease: "none",
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+  }
+
+  /* ---------- hero slideshow ---------- */
+  function initHeroSlides() {
+    var host = $id("hero-slides");
+    if (!host || !HERO_PHOTOS.length) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var track = document.createElement("div");
+    track.className = "hero-track";
+    HERO_PHOTOS.forEach(function (src) {
+      var d = document.createElement("div");
+      d.className = "hs";
+      d.style.backgroundImage = "url('" + src + "')";
+      track.appendChild(d);
+    });
+    host.appendChild(track);
+
+    var dots = $id("hs-dots");
+    var arrPrev = $id("hs-prev");
+    var arrNext = $id("hs-next");
+    var total = HERO_PHOTOS.length;
+    var idx = 0;
+    var timer = null;
+
+    function place(i) {
+      if (typeof gsap !== "undefined") {
+        if (reduce) { gsap.set(track, { xPercent: -i * 100 }); }
+        else { gsap.to(track, { xPercent: -i * 100, duration: 1.0, ease: "power3.inOut", overwrite: "auto" }); }
+      } else {
+        track.style.transform = "translateX(-" + i * 100 + "%)";
+      }
+    }
+    function go(i) {
+      if (i < 0) i = total - 1;
+      if (i >= total) i = 0;
+      idx = i;
+      place(i);
+      if (dots) {
+        Array.prototype.forEach.call(dots.children, function (c, k) {
+          c.classList.toggle("on", k === idx);
+        });
+      }
+    }
+    function startAuto() {
+      stopAuto();
+      if (reduce || total < 2) return;
+      timer = setInterval(function () { go(idx + 1); }, 6000);
+    }
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    if (dots) {
+      for (var i = 0; i < total; i++) {
+        (function (k) {
+          var s = document.createElement("i");
+          s.addEventListener("click", function () { go(k); startAuto(); });
+          dots.appendChild(s);
+        })(i);
+      }
+    }
+    if (arrPrev) arrPrev.addEventListener("click", function () { go(idx - 1); startAuto(); });
+    if (arrNext) arrNext.addEventListener("click", function () { go(idx + 1); startAuto(); });
+    if (host.addEventListener) {
+      host.addEventListener("mouseenter", stopAuto);
+      host.addEventListener("mouseleave", startAuto);
+    }
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stopAuto(); else startAuto();
+    });
+
+    go(0);
+    startAuto();
+  }
+
+  /* ---------- national team caps (all appearances) ---------- */
+  function renderIntlCaps() {
+    var caps = (DATA && DATA.intlMatches) ? DATA.intlMatches : [];
+    if (!caps.length) { return; }
+    var years = [], cats = [];
+    caps.forEach(function (r) {
+      var y = r.date.slice(0, 4);
+      if (years.indexOf(y) < 0) years.push(y);
+      if (cats.indexOf(r.cat) < 0) cats.push(r.cat);
+    });
+    years.sort(); cats.sort();
+    var cg = sum(caps, function (r) { return r.goals; });
+    var ca = sum(caps, function (r) { return r.assists; });
+    var box = $id("caps-stats");
+    if (box) {
+      box.innerHTML = [
+        { n: caps.length, l: "国家队出场" },
+        { n: cg, l: "国家队进球" },
+        { n: ca, l: "国家队助攻" },
+        { n: caps[0].date, l: "首秀日期" },
+        { n: caps[caps.length - 1].date, l: "最近出场" },
+        { n: (cg / caps.length).toFixed(3), l: "场均进球" }
+      ].map(function (x) {
+        return '<div class="stat"><div class="num" style="font-size:16px">' + esc(String(x.n)) + '</div><div class="lbl">' + x.l + "</div></div>";
+      }).join("");
+    }
+    fillSelect($id("c-year"), years, "全部年份");
+    fillSelect($id("c-cat"), cats, "全部赛事类型");
+    var st = { year: "all", cat: "all", search: "" };
+    function filtered() {
+      return caps.filter(function (r) {
+        if (st.year !== "all" && r.date.slice(0, 4) !== st.year) return false;
+        if (st.cat !== "all" && r.cat !== st.cat) return false;
+        if (st.search) {
+          var hay = (r.opponent + " " + r.comp_en + " " + r.cat).toLowerCase();
+          if (hay.indexOf(st.search) < 0) return false;
+        }
+        return true;
       });
     }
+    function draw() {
+      var rows = filtered();
+      var sg = sum(rows, function (r) { return r.goals; });
+      var el = $id("c-summary");
+      if (el) el.textContent = "共 " + rows.length + " 场 · 进球 " + sg;
+      var body = $id("caps-body");
+      if (!body) return;
+      body.innerHTML = rows.map(function (r) {
+        var score = (r.gf == null || r.ga == null) ? "-" : r.gf + ":" + r.ga;
+        var resLbl = r.res === "W" ? "胜" : r.res === "D" ? "平" : r.res === "L" ? "负" : "-";
+        var ven = r.venue === "H" ? "主" : r.venue === "A" ? "客" : "-";
+        var gCls = r.goals >= 3 ? ' class="goal-hi"' : r.goals > 0 ? ' style="color:#e6c15c"' : "";
+        return "<tr>" +
+          "<td>" + r.cap + "</td>" +
+          "<td>" + esc(r.date) + "</td>" +
+          "<td>" + ven + "</td>" +
+          "<td>" + esc(r.opponent) + "</td>" +
+          "<td>" + score + "</td>" +
+          '<td class="result-' + (r.res || "?") + '">' + resLbl + "</td>" +
+          "<td" + gCls + ">" + r.goals + "</td>" +
+          "<td>" + r.assists + "</td>" +
+          "<td>" + (r.mins == null ? "-" : r.mins + "′") + "</td>" +
+          "<td>" + esc(r.cat + " · " + r.comp_en) + "</td>" +
+          "</tr>";
+      }).join("") || '<tr><td colspan="10" style="text-align:center;color:#8b93a7;padding:30px">没有符合条件的比赛</td></tr>';
+    }
+    var ids = { year: "c-year", cat: "c-cat", search: "c-search", reset: "c-reset" };
+    $id(ids.year).addEventListener("change", function () { st.year = this.value; draw(); });
+    $id(ids.cat).addEventListener("change", function () { st.cat = this.value; draw(); });
+    $id(ids.search).addEventListener("input", function () { st.search = this.value.trim().toLowerCase(); draw(); });
+    $id(ids.reset).addEventListener("click", function () {
+      $id(ids.year).value = "all"; $id(ids.cat).value = "all"; $id(ids.search).value = "";
+      st.year = "all"; st.cat = "all"; st.search = ""; draw();
+    });
+    draw();
   }
 
   /* ---------- international goals ---------- */
@@ -566,7 +717,7 @@
       st.cat = "all"; st.year = "all"; st.search = ""; draw();
     });
     var bsub = $id("intl-banner-sub");
-    if (bsub) bsub.textContent = "共 " + goals.length + " 粒进球（" + goals[0].date + " → " + goals[goals.length - 1].date + "）· 点击查看全部";
+    if (bsub) { var ncaps = (DATA && DATA.intlMatches) ? DATA.intlMatches.length : 0; bsub.textContent = (ncaps ? "共 " + ncaps + " 场出场 · " : "") + goals.length + " 粒进球（" + goals[0].date + " → " + goals[goals.length - 1].date + "）· 点击查看全部"; }
     var bb = $id("intl-banner");
     if (bb) bb.addEventListener("click", function () {
       var tb = document.querySelector('.tab[data-view="intl"]');
@@ -588,7 +739,9 @@
     renderMatches();
     renderAbout();
     renderCredits();
+    renderIntlCaps();
     renderIntl();
+    initHeroSlides();
     initAnimations();
   });
 })();
