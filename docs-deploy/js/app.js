@@ -2,9 +2,9 @@
 (function () {
   "use strict";
 
-  var DATA = window.CAREER_DATA || null;
-  var M = DATA ? DATA.matches : [];
-  var PLAYER = DATA ? DATA.player : {};
+  var DATA = null;
+  var M = [];
+  var PLAYER = {};
 
   var CLUB_ACC = {
     "葡萄牙体育": { c: "#2e9e5b", c2: "#93d8b0", m: "体" },
@@ -404,7 +404,7 @@
       "<b>进球/助攻</b><span>该场 C罗 的个人数据</span>" +
       "<b>时间</b><span>该场出场分钟数</span></div>" +
       "<h2>技术说明</h2>" +
-      "<p>纯静态网页，无后端、无外部依赖，数据内嵌于 <code>data/data.js</code>（约 1094 场俱乐部 + 233 场国家队 + 146 粒进球明细），离线可直接打开 <code>index.html</code> 使用。</p>";
+      "<p>纯静态网页，无后端、无外部依赖，数据存放于 <code>data/matches.json</code>（每日自动更新）（约 1094 场俱乐部 + 233 场国家队 + 146 粒进球明细），离线可直接打开 <code>index.html</code> 使用。</p>";
     $id("about-content").innerHTML = html;
   }
 
@@ -728,9 +728,15 @@
 
 
   /* ---------- boot ---------- */
-  document.addEventListener("DOMContentLoaded", function () {
+  function applyData(d) {
+    DATA = d || null;
+    M = (d && d.matches) ? d.matches : [];
+    PLAYER = (d && d.player) ? d.player : {};
+  }
+
+  function startApp() {
     if (!M.length) {
-      document.body.insertAdjacentHTML("afterbegin", "<p style='color:#ff6b6b;padding:20px'>未找到数据（data/data.js）</p>");
+      document.body.insertAdjacentHTML("afterbegin", "<p style='color:#ff6b6b;padding:20px'>未找到数据（data/matches.json）</p>");
       return;
     }
     initTabs();
@@ -743,7 +749,28 @@
     renderIntl();
     initHeroSlides();
     initAnimations();
-  });
+  }
+
+  function loadLegacyData() {
+    var s = document.createElement("script");
+    s.src = "data/data.js";
+    s.onload = function () { applyData(window.CAREER_DATA); startApp(); };
+    s.onerror = function () { startApp(); };
+    document.body.appendChild(s);
+  }
+
+  function loadData() {
+    if (window.fetch) {
+      fetch("data/matches.json?v=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (d) { applyData(d); startApp(); })
+        .catch(function () { loadLegacyData(); });
+    } else {
+      loadLegacyData();
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadData);
 })();
 
 
