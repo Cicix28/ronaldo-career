@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C罗 · 职业生涯比赛记录</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-badge">CR7</span><span class="brand-text">C罗 · 生涯比赛记录</span></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="overview">总览</button>
+    <button class="tab" data-view="matches">逐场比赛</button>
+    <button class="tab" data-view="intl">国家队</button>
+    <button class="tab" data-view="about">数据说明</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ 总览 ============ -->
+  <section id="view-overview" class="view active">
+
+    <div class="hero">
+      <div class="hero-slides" id="hero-slides"></div>
+      <div class="hero-veil"></div>
+      <button class="hero-arr hero-arr-l" id="hs-prev" type="button" aria-label="上一张">&lsaquo;</button>
+      <button class="hero-arr hero-arr-r" id="hs-next" type="button" aria-label="下一张">&rsaquo;</button>
+      <div class="hero-dots" id="hs-dots"></div>
+      <div class="hero-content">
+        <div class="hero-avatar"><img src="assets/img/avatar.jpg" alt="Cristiano Ronaldo"></div>
+        <div class="hero-txt">
+          <div class="hero-name">
+            <h1>克里斯蒂亚诺·罗纳尔多</h1>
+            <span class="hero-no">7</span>
+          </div>
+          <p class="hero-sub">Cristiano Ronaldo · 逐场比赛数据展示</p>
+          <p class="hero-note" id="hero-note"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid" id="stat-grid"></div>
+
+    <div class="intl-banner" id="intl-banner" title="查看国家队进球">
+      <div class="ib-flag">🇵🇹</div>
+      <div class="ib-main">
+        <div class="ib-title">葡萄牙国家队</div>
+        <div class="ib-sub" id="intl-banner-sub">查看 C罗 的国家队进球记录</div>
+      </div>
+      <div class="ib-go">查看全部进球 →</div>
+    </div>
+
+    <div class="block">
+      <h2 class="block-title"><span class="bar"></span>赛场瞬间 <span class="hint">照片 © 原作者 · CC 授权（见页脚）</span></h2>
+      <div class="gallery">
+        <figure class="g-item">
+          <img src="assets/img/madrid.jpg" alt="皇家马德里时期" loading="lazy">
+          <figcaption><b>皇家马德里</b>2014 · 金球奖时刻</figcaption>
+        </figure>
+        <figure class="g-item">
+          <img src="assets/img/juve.jpg" alt="尤文图斯时期" loading="lazy">
+          <figcaption><b>尤文图斯</b>2019/20 · 意甲联赛</figcaption>
+        </figure>
+        <figure class="g-item">
+          <img src="assets/img/alnassr.jpg" alt="利雅得胜利时期" loading="lazy">
+          <figcaption><b>利雅得胜利</b>2023 · 亚冠</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2 class="block-title"><span class="bar"></span>效力阶段 <span class="hint">（当前数据范围）</span></h2>
+      <div class="club-grid" id="club-grid"></div>
+    </div>
+
+    <div class="block two-col">
+      <div class="card">
+        <h2 class="block-title"><span class="bar"></span>每赛季出场 &amp; 进球趋势</h2>
+        <div id="season-chart" class="chart"></div>
+      </div>
+      <div class="card">
+        <h2 class="block-title"><span class="bar"></span>赛事分布（按出场）</h2>
+        <div id="comp-chart" class="chart"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2 class="block-title"><span class="bar"></span>里程碑</h2>
+      <div id="milestones" class="milestones"></div>
+    </div>
+  </section>
+
+  <!-- ============ 逐场比赛 ============ -->
+  <section id="view-matches" class="view">
+    <div class="filter-bar" id="filter-bar">
+      <select id="f-club"></select>
+      <select id="f-season"></select>
+      <select id="f-comp"></select>
+      <select id="f-result"></select>
+      <input id="f-search" type="search" placeholder="搜索对手 / 轮次…">
+      <button id="f-reset" class="btn-ghost">重置</button>
+      <span class="filter-summary" id="filter-summary"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="match-table">
+        <thead>
+          <tr>
+            <th data-key="date" class="sortable">日期</th>
+            <th data-key="club_short">俱乐部</th>
+            <th data-key="comp_zh">赛事</th>
+            <th data-key="opponent">对手</th>
+            <th data-key="venue">主/客</th>
+            <th data-key="score">比分</th>
+            <th data-key="res">结果</th>
+            <th data-key="goals">进球</th>
+            <th data-key="assists">助攻</th>
+            <th data-key="mins">时间</th>
+            <th data-key="cards">牌</th>
+          </tr>
+        </thead>
+        <tbody id="match-body"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="pager"></div>
+  </section>
+
+
+  <!-- ============ 国家队 ============ -->
+  <section id="view-intl" class="view">
+    <div class="hero-intro card">
+      <div class="block-title"><span class="bar"></span>葡萄牙国家队 · 全部出场与进球</div>
+      <p class="intro-p">C罗为葡萄牙国家队出场 <b>234</b> 场、攻入 <b>146</b> 球（截至 2026-07 世界杯）。下表列出每一场国家队比赛（含未进球场次），进球逐粒明细见下方。</p>
+    </div>
+
+    <div class="card intl-card">
+      <div class="block-title"><span class="bar"></span>国家队 · 全部出场（234 场）</div>
+      <div class="stat-grid" id="caps-stats"></div>
+      <div class="filter-bar">
+        <select id="c-year"></select>
+        <select id="c-cat"></select>
+        <input id="c-search" type="search" placeholder="搜索对手 / 赛事…">
+        <button id="c-reset" class="btn-ghost">重置</button>
+        <span class="filter-summary" id="c-summary"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="caps-table">
+          <thead>
+            <tr>
+              <th>出场</th>
+              <th>日期</th>
+              <th>主/客</th>
+              <th>对手</th>
+              <th>比分</th>
+              <th>结果</th>
+              <th>进球</th>
+              <th>助攻</th>
+              <th>时间</th>
+              <th>赛事</th>
+            </tr>
+          </thead>
+          <tbody id="caps-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card intl-card">
+      <div class="block-title"><span class="bar"></span>国家队 · 进球明细（146 粒）</div>
+      <p class="intro-p">C罗为葡萄牙国家队攻入的 <b>146</b> 粒进球（数据来源：Wikipedia《List of international goals scored by Cristiano Ronaldo》，截至 2026-07）。</p>
+      <div class="stat-grid" id="intl-stats"></div>
+      <div class="filter-bar">
+        <select id="i-cat"></select>
+        <select id="i-year"></select>
+        <input id="i-search" type="search" placeholder="搜索对手 / 赛事 / 场地…">
+        <button id="i-reset" class="btn-ghost">重置</button>
+        <span class="filter-summary" id="i-summary"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="intl-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>日期</th>
+              <th>对手</th>
+              <th>进球比分</th>
+              <th>终场</th>
+              <th>赛事</th>
+              <th>场地</th>
+            </tr>
+          </thead>
+          <tbody id="intl-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 数据说明 ============ -->
+  <section id="view-about" class="view">
+    <div class="card about-card">
+      <h2><span class="bar"></span>数据来源与范围</h2>
+      <div id="about-content"></div>
+      <h2><span class="bar"></span>照片授权（Wikimedia Commons）</h2>
+      <div class="credits" id="photo-credits"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div>逐场数据基于 Transfermarkt · 生涯合计参考 Wikipedia · 由 Codex 生成 · 2026-11-18</div>
+  <div class="foot-credits" id="foot-credits"></div>
+</footer>
+
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/ScrollTrigger.min.js"></script>
+<script src="data/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+
